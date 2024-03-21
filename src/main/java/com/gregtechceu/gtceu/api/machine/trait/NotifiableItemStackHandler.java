@@ -174,14 +174,6 @@ public class NotifiableItemStackHandler extends NotifiableRecipeHandlerTrait<Ing
         }
     }
 
-    public void importFromNearby(@NotNull Direction... facings) {
-        var level = getMachine().getLevel();
-        var pos = getMachine().getPos();
-        for (Direction facing : facings) {
-            ItemTransferHelper.importToTarget(this, Integer.MAX_VALUE, f -> true, level, pos.relative(facing), facing.getOpposite());
-        }
-    }
-
     //////////////////////////////////////
     //*******     Capability    ********//
     //////////////////////////////////////

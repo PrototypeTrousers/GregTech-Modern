@@ -1,6 +1,7 @@
 package com.gregtechceu.gtceu.common.machine.multiblock.part;
 
 import com.gregtechceu.gtceu.api.capability.recipe.IO;
+import com.gregtechceu.gtceu.api.cover.CoverBehavior;
 import com.gregtechceu.gtceu.api.gui.GuiTextures;
 import com.gregtechceu.gtceu.api.gui.fancy.ConfiguratorPanel;
 import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
@@ -17,6 +18,7 @@ import com.lowdragmc.lowdraglib.gui.widget.SlotWidget;
 import com.lowdragmc.lowdraglib.gui.widget.Widget;
 import com.lowdragmc.lowdraglib.gui.widget.WidgetGroup;
 import com.lowdragmc.lowdraglib.jei.IngredientIO;
+import com.lowdragmc.lowdraglib.side.item.IItemTransfer;
 import com.lowdragmc.lowdraglib.side.item.ItemTransferHelper;
 import com.lowdragmc.lowdraglib.syncdata.ISubscription;
 import com.lowdragmc.lowdraglib.syncdata.annotation.Persisted;
@@ -156,10 +158,11 @@ public class ItemBusPartMachine extends TieredIOPartMachine implements IDistinct
     protected void autoIO() {
         if (getOffsetTimer() % 5 == 0) {
             if (isWorkingEnabled()) {
+                IItemTransfer it = ItemTransferHelper.getItemTransfer(getLevel(), getPos(), getFrontFacing());
                 if (io == IO.OUT) {
-                    getInventory().exportToNearby(getFrontFacing());
+                    ItemTransferHelper.exportToTarget(it, Integer.MAX_VALUE, f -> true, getLevel(), getPos().relative(getFrontFacing()), getFrontFacing().getOpposite());
                 } else if (io == IO.IN) {
-                    getInventory().importFromNearby(getFrontFacing());
+                    ItemTransferHelper.importToTarget(it, Integer.MAX_VALUE, f -> true, getLevel(), getPos().relative(getFrontFacing()), getFrontFacing().getOpposite());
                 }
             }
             updateInventorySubscription();
