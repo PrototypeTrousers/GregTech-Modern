@@ -1,7 +1,6 @@
 package com.gregtechceu.gtceu.common.machine.multiblock.part;
 
 import com.gregtechceu.gtceu.api.capability.recipe.IO;
-import com.gregtechceu.gtceu.api.cover.CoverBehavior;
 import com.gregtechceu.gtceu.api.gui.GuiTextures;
 import com.gregtechceu.gtceu.api.gui.fancy.ConfiguratorPanel;
 import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
@@ -10,7 +9,6 @@ import com.gregtechceu.gtceu.api.machine.fancyconfigurator.CircuitFancyConfigura
 import com.gregtechceu.gtceu.api.machine.feature.IMachineModifyDrops;
 import com.gregtechceu.gtceu.api.machine.feature.multiblock.IDistinctPart;
 import com.gregtechceu.gtceu.api.machine.multiblock.part.TieredIOPartMachine;
-import com.gregtechceu.gtceu.api.machine.trait.ItemHandlerProxyRecipeTrait;
 import com.gregtechceu.gtceu.api.machine.trait.NotifiableItemStackHandler;
 import com.gregtechceu.gtceu.common.item.IntCircuitBehaviour;
 import com.gregtechceu.gtceu.config.ConfigHolder;
@@ -27,7 +25,6 @@ import lombok.Getter;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.TickTask;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
@@ -37,7 +34,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author KilaBash
@@ -158,11 +154,13 @@ public class ItemBusPartMachine extends TieredIOPartMachine implements IDistinct
     protected void autoIO() {
         if (getOffsetTimer() % 5 == 0) {
             if (isWorkingEnabled()) {
-                IItemTransfer it = ItemTransferHelper.getItemTransfer(getLevel(), getPos(), getFrontFacing());
-                if (io == IO.OUT) {
-                    ItemTransferHelper.exportToTarget(it, Integer.MAX_VALUE, f -> true, getLevel(), getPos().relative(getFrontFacing()), getFrontFacing().getOpposite());
-                } else if (io == IO.IN) {
-                    ItemTransferHelper.importToTarget(it, Integer.MAX_VALUE, f -> true, getLevel(), getPos().relative(getFrontFacing()), getFrontFacing().getOpposite());
+                IItemTransfer it = getItemTransferCap(getFrontFacing(), true);
+                if (it != null) {
+                    if (io == IO.OUT) {
+                        ItemTransferHelper.exportToTarget(it, Integer.MAX_VALUE, f -> true, getLevel(), getPos().relative(getFrontFacing()), getFrontFacing().getOpposite());
+                    } else if (io == IO.IN) {
+                        ItemTransferHelper.importToTarget(it, Integer.MAX_VALUE, f -> true, getLevel(), getPos().relative(getFrontFacing()), getFrontFacing().getOpposite());
+                    }
                 }
             }
             updateInventorySubscription();

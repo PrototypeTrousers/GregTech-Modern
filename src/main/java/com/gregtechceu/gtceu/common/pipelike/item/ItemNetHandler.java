@@ -83,9 +83,6 @@ public class ItemNetHandler implements IItemTransfer {
         // abort if there are two conveyors
         if (pipeConveyor && tileConveyor) return stack;
 
-        if (tileCover != null && !checkImportCover(tileCover, false, stack))
-            return stack;
-
         if (!pipeConveyor && !tileConveyor)
             return insertFirst(stack, simulate);
 
@@ -97,16 +94,6 @@ public class ItemNetHandler implements IItemTransfer {
         }
 
         return insertFirst(stack, simulate);
-    }
-
-    public static boolean checkImportCover(CoverBehavior cover, boolean onPipe, ItemStack stack) {
-        if (cover == null) return true;
-        if (cover instanceof ItemFilterCover filter) {
-            return (filter.getFilterMode() != ItemFilterMode.FILTER_BOTH &&
-                    (filter.getFilterMode() != ItemFilterMode.FILTER_INSERT || !onPipe) &&
-                    (filter.getFilterMode() != ItemFilterMode.FILTER_EXTRACT || onPipe)) || filter.getItemFilter().test(stack);
-        }
-        return true;
     }
 
     public ItemStack insertFirst(ItemStack stack, boolean simulate) {

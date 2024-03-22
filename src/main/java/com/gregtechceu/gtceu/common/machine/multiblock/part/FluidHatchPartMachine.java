@@ -9,6 +9,7 @@ import com.gregtechceu.gtceu.api.machine.trait.NotifiableFluidTank;
 import com.lowdragmc.lowdraglib.gui.widget.*;
 import com.lowdragmc.lowdraglib.side.fluid.FluidHelper;
 import com.lowdragmc.lowdraglib.side.fluid.FluidTransferHelper;
+import com.lowdragmc.lowdraglib.side.fluid.IFluidTransfer;
 import com.lowdragmc.lowdraglib.syncdata.ISubscription;
 import com.lowdragmc.lowdraglib.syncdata.annotation.Persisted;
 import com.lowdragmc.lowdraglib.syncdata.field.ManagedFieldHolder;
@@ -116,10 +117,13 @@ public class FluidHatchPartMachine extends TieredIOPartMachine {
     protected void autoIO() {
         if (getOffsetTimer() % 5 == 0) {
             if (isWorkingEnabled()) {
-                if (io == IO.OUT) {
-                    tank.exportToNearby(getFrontFacing());
-                } else if (io == IO.IN){
-                    tank.importFromNearby(getFrontFacing());
+                IFluidTransfer ft = getFluidTransferCap(getFrontFacing(), true);
+                if (ft != null) {
+                    if (io == IO.OUT) {
+                        FluidTransferHelper.exportToTarget(ft, Integer.MAX_VALUE, f -> true, getLevel(), getPos().relative(getFrontFacing()), getFrontFacing().getOpposite());
+                    } else if (io == IO.IN) {
+                        FluidTransferHelper.importToTarget(ft, Integer.MAX_VALUE, f -> true, getLevel(), getPos().relative(getFrontFacing()), getFrontFacing().getOpposite());
+                    }
                 }
             }
             updateTankSubscription();
